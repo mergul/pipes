@@ -80,7 +80,13 @@ public class ContinuationTest {
         boolean result = (a < b);
         return () -> cont.apply(result);
     }
-
+    public static Thunk switchIt(int a, Continuation<Integer> firstBranch, Continuation<Integer> secondBranch, Continuation<Integer> thirdBranch) {
+        switch (a) {
+            case 1: return () -> secondBranch.apply( 1);
+            case 2: return () -> thirdBranch.apply(2);
+            default: return () -> firstBranch.apply(0);
+        }
+    }
     private static Thunk iff(boolean expr,
                              Continuation<Boolean> trueBranch,
                              Continuation<Boolean> falseBranch) {

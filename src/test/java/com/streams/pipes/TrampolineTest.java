@@ -29,7 +29,7 @@ public class TrampolineTest {
         return () -> cont.apply(n < m);
     }
     public static Thunk iff(boolean value, Continuation<Boolean> truePath, Continuation<Boolean> falsePath) {
-        return value ? () -> truePath.apply(value) : () -> falsePath.apply(value);
+        return value ? () -> truePath.apply(true) : () -> falsePath.apply(false);
     }
     public static Thunk fibonacci(int n, BigInteger acc1, BigInteger acc2, Continuation<BigInteger> cont) {
         return lt(n, 2, lte ->
