@@ -69,12 +69,12 @@ public class RoomEntre<T> implements ChatRoomMessageListener<T> {
                     || ((date.getTime() - this.lastTagsEmit.getTime()) / (1000) % 60) > 30) {
                 this.sink.tryEmitNext(getMyEvent(msg, key, ev));
                 this.lastTagsEmit = date;
-                this.lastRecord=getMyEvent(msg, key, ev);
             }
         } else {
           //  logger.info("finished BalanceRecord key {}, event {}, total balance --> {}", key, ev, ((BalanceRecord) msg).getTotalBalance());
             this.sink.tryEmitNext(getMyEvent(msg, key, ev));
         }
+        this.lastRecord=getMyEvent(msg, key, ev);
         emitHeartBeat(key);
     }
 

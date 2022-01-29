@@ -18,6 +18,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
 	implementation 'com.github.danielwegener:logback-kafka-appender:0.2.0-RC2'
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
