@@ -17,6 +17,30 @@ public class ContinuationTest {
     private interface Thunk {
         Thunk run();
     }
+    @FunctionalInterface
+    public interface Function<T, U> {
+        U apply(T value);
+    }
+    @FunctionalInterface
+    public interface Predicate<T> {
+        boolean test(T value);
+    }
+    @FunctionalInterface
+    public interface Consumer<T> {
+        void accept(T value);
+    }
+    @FunctionalInterface
+    public interface Supplier<T> {
+        T get();
+    }
+    @FunctionalInterface
+    public interface Monad<T> {
+        <U> Monad<U> flatMap(Function<? super T, ? extends Monad<U>> f);
+    }
+    @FunctionalInterface
+    public interface MonadFactory<T> {
+        <U> Monad<U> of(U value);
+    }
     private static void trampoline(Thunk thunk) {
         while (thunk != null) {
             thunk = thunk.run();
@@ -27,9 +51,19 @@ public class ContinuationTest {
         return () -> cont.apply(sum);
     }
 
-    private static Thunk multiply(int a, BigInteger b, Continuation<BigInteger> cont) {
-        BigInteger product = BigInteger.valueOf(a).multiply(b);
-        return () -> cont.apply(product);
+    public static Thunk multiply(BigInteger value, BigInteger product, Continuation<BigInteger> cont) {
+        return () -> cont.apply(value.multiply(product));
+    }
+
+    @Test
+    public void testTrampoline() {
+        AtomicReference<BigInteger> result = new AtomicReference<>();
+        Thunk thunk = add(BigInteger.ONE, BigInteger.TEN, (value) -> multiply(value, BigInteger.TEN, (value2) -> {
+            result.set(value2);
+            return null;
+        }));
+        trampoline(thunk);
+        assertEquals(BigInteger.valueOf(110), result.get());
     }
 
     private static Thunk subtract(int a, int b, Continuation<Integer> cont) {
@@ -68,7 +102,7 @@ public class ContinuationTest {
                         trueArg -> cont.apply(BigInteger.ONE),
                         falseArg -> subtract(n, 1, nm1 ->
                                 factorial(nm1, fnm1 ->
-                                        multiply(n, fnm1, cont)))));
+                                        multiply(BigInteger.valueOf(n), fnm1, cont)))));
     }
     private static <T> Continuation<T> endCall(Consumer<T> call) {
         return r -> {
