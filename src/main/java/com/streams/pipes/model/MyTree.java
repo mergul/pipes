@@ -25,10 +25,10 @@ public class MyTree<A> extends Tree<A> {
             System.out.println("visit -> " + this.value + " is leaf");
             return onLeaf.apply(value);
         } else {
-            return Trampoline.suspend(() ->
-                            this.left != null && this.right != null ? onBinaryBranch.apply(this.left, this.right)
-                                    : onUnaryBranch.apply(this.left != null ? this.left : this.right))
-                    .bind((root) -> reducer.apply(root, this.value));
+            return (this.left != null && this.right != null 
+            ? onBinaryBranch.apply(this.left, this.right)
+            : onUnaryBranch.apply(this.left != null ? this.left : this.right))
+            .bind((root) -> reducer.apply(root, this.value));
         }
     }
 

@@ -11,7 +11,7 @@ public abstract class Trampoline<A> {
 
     public static <A> Trampoline<A> suspend(Supplier<Trampoline<A>> thunk) {
         Objects.requireNonNull(thunk, "thunk");
-        return new Suspend<A>(thunk);
+        return new Suspend<>(thunk);
     }
 
     private Trampoline() {
@@ -37,7 +37,16 @@ public abstract class Trampoline<A> {
     }
 
     abstract boolean isSuspended();
-
+    /*
+     * Transforms this Trampoline to one that's one step closer to a Return(value).
+     *
+     * resume(FlatMap(Return(value), calcNextTrampoline)) ==> calcNextTrampoline.apply(value)=Return(value),
+     * resume(FlatMap(FlatMap(trampoline, calcNextTrampoline), parentCalcNextTrampoline)) ==>
+     *    FlatMap(trampoline, value -> FlatMap(calcNextTrampoline.apply(value), parentCalcNextTrampoline)) ==>
+     *
+     *
+     * Throws IllegalStateException if called for a Return(value)
+     */
     abstract Trampoline<A> resume();
 
     abstract <B> Trampoline<B> applyFlatMap(Function<? super A, Trampoline<B>> parentCalcNextTrampoline);
@@ -62,7 +71,7 @@ public abstract class Trampoline<A> {
             throw new IllegalStateException();
         }
 
-        // resume(FlatMap(Return(value), calcNextTrampoline)) ==> calcNextTrampoline.apply(value)
+        // resume(FlatMap(Return(value), calcNextTrampoline)) ==> calcNextTrampoline.apply(value)=Return(value)
         @Override
         <B> Trampoline<B> applyFlatMap(Function<? super A, Trampoline<B>> parentCalcNextTrampoline) {
             return parentCalcNextTrampoline.apply(value);
@@ -97,7 +106,8 @@ public abstract class Trampoline<A> {
         <B> Trampoline<B> applyFlatMap(Function<? super A, Trampoline<B>> parentCalcNextTrampoline) {
             return resume().applyFlatMap(parentCalcNextTrampoline);
         }
-
+      
+        // resume(FlatMap(Suspend(Supplier), calcNextTrampoline)) ==> calcNextTrampoline.apply(value)=Suspend(Supplier)
         @Override
         public Trampoline<A> resume() {
             return resume.get();
