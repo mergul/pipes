@@ -3,9 +3,10 @@ package com.streams.pipes;
 import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TrampolineTest {
+public class MyTrampolineTest {
     @FunctionalInterface
     public interface Thunk {
         Thunk run();
