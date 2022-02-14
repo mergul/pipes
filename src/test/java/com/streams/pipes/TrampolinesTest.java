@@ -27,30 +27,29 @@ public class TrampolinesTest {
     @Test
     public void testTreeTraversalTrampoline() {
         // Given
-        MyTree<Integer> myTree=new MyTree(
-                10,
+        MyTree<String> myTree=new MyTree(
+                ""+20,
                 new MyTree(
-                        20,
+                        ""+10,
                         new MyTree(
-                                -3,
+                                ""+-3,
                                 new MyTree(
-                                        -2,
+                                        ""+-4,
                                         new MyTree(
-                                                -6,
-                                                new MyTree(-9, new MyTree(-1, null, null), null),
+                                                ""+-6,
+                                                new MyTree(""+-9, new MyTree(""+-11, null, null), null),
                                                 null
                                                 ),
                                         null
                                         ),
                                 null
                                 ),
-                        new MyTree(-6, null, null)
+                        new MyTree(""+16, null, null)
                         ),
-                new MyTree(30, new MyTree(13, null, null), new MyTree(16, null, null))
+                new MyTree(""+30, new MyTree(""+22, null, null), new MyTree(""+36, null, null))
                 );
         //new MyTree<>(100, new MyTree<>(12, new MyTree<>(13, new MyTree<>(15, null, null), new MyTree<>(16, null, null)), new MyTree<>(14, new MyTree<>(18, null, null), new MyTree<>(19, null, null))), new MyTree<>(-2, new MyTree<>(-3, new MyTree<>(-5, null, null), new MyTree<>(-6, null, null)), new MyTree<>(-4, new MyTree<>(-8, null, null), new MyTree<>(-9, null, null))));
 
-        int integer= TreeOps.foldLeft(myTree, Integer::sum, 0);
-        System.out.println(integer);
+        System.out.println(TreeOps.foldLeft(myTree, (a, b)-> String.join("|", a, b), ""));
     }
 }

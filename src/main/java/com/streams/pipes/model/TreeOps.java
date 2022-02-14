@@ -10,12 +10,16 @@ public final class TreeOps <A, B> {
 
     private static <A, B> Trampoline<B> trampolinedFoldLeft(Tree<A> tree, BiFunction<B, A, B> reduce, B init) {
         return tree.visit(
-                leafValue -> Trampoline.pure(reduce.apply(init, leafValue)),
-                child -> Trampoline.suspend(() -> trampolinedFoldLeft(child, reduce, init)),
-                (leftChild, rightChild) ->
-                        Trampoline.suspend(() -> trampolinedFoldLeft(leftChild, reduce, init))
-                                .bind(leftAcc -> trampolinedFoldLeft(rightChild, reduce, leftAcc)),
-                (bValue, aValue) -> Trampoline.pure(reduce.apply( bValue, aValue))
+                (leafValue) -> Trampoline.pure(reduce.apply(init, leafValue)),
+                (child) -> {
+                    boolean isLeft = child.getLeft()!=null;
+                    return Trampoline.suspend(() -> trampolinedFoldLeft(isLeft? child.getLeft(): child.getRight(), reduce, init).bind(acc ->
+                            Trampoline.pure(reduce.apply(acc, child.getValue()))));
+                },
+                (child) ->
+                        Trampoline.suspend(() -> trampolinedFoldLeft(child.getLeft(), reduce, init)
+                                .bind(leftAcc -> Trampoline.pure(reduce.apply(leftAcc, child.getValue())))
+                                .bind(result -> trampolinedFoldLeft(child.getRight(), reduce, result)))
         );
     }
 

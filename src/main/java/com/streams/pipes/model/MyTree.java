@@ -1,6 +1,5 @@
 package com.streams.pipes.model;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MyTree<A> extends Tree<A> {
@@ -18,17 +17,15 @@ public class MyTree<A> extends Tree<A> {
     public <B> Trampoline<B> visit(
             Function<A, Trampoline<B>> onLeaf,
             Function<Tree<A>, Trampoline<B>> onUnaryBranch,
-            BiFunction<Tree<A>, Tree<A>, Trampoline<B>> onBinaryBranch,
-            BiFunction<B, A, Trampoline<B>> reducer) {
+            Function<Tree<A>, Trampoline<B>> onBinaryBranch) {
         System.out.println("visit -> " + this.value);
         if (isLeaf()) {
             System.out.println("visit -> " + this.value + " is leaf");
             return onLeaf.apply(value);
         } else {
-            return (this.left != null && this.right != null 
-            ? onBinaryBranch.apply(this.left, this.right)
-            : onUnaryBranch.apply(this.left != null ? this.left : this.right))
-            .bind((root) -> reducer.apply(root, this.value));
+            return this.left != null && this.right != null
+            ? onBinaryBranch.apply(this)
+            : onUnaryBranch.apply(this);
         }
     }
 
@@ -41,15 +38,28 @@ public class MyTree<A> extends Tree<A> {
     public Boolean isLeaf() {
         return this.left == null && this.right == null;
     }
+
+    @Override
+    public Tree<A> getLeft() {
+        return this.left;
+    }
+
+    @Override
+    public Tree<A> getRight() {
+        return this.right;
+    }
 }
 abstract class Tree<A> {
     public abstract <B> Trampoline<B> visit(
             Function<A, Trampoline<B>> onLeaf,
             Function<Tree<A>, Trampoline<B>> onUnaryBranch,
-            BiFunction<Tree<A>, Tree<A>, Trampoline<B>> onBinaryBranch,
-            BiFunction<B, A, Trampoline<B>> reducer);
+            Function<Tree<A>, Trampoline<B>> onBinaryBranch);
 
     public abstract A getValue();
 
     public abstract Boolean isLeaf();
+
+    public abstract Tree<A> getLeft();
+
+    public abstract Tree<A> getRight();
 }
