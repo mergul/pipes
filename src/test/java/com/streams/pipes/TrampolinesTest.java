@@ -37,7 +37,7 @@ public class TrampolinesTest {
                                         ""+-4,
                                         new MyTree(
                                                 ""+-6,
-                                                new MyTree(""+-9, new MyTree(""+-11, null, null), null),
+                                                new MyTree(""+-9, new MyTree(""+-11, null, new MyTree(""+-10, null, null)), null),
                                                 null
                                                 ),
                                         null

@@ -14,7 +14,7 @@ public final class TreeOps <A, B> {
                 (child) -> {
                     boolean isLeft = child.getLeft()!=null;
                     return Trampoline.suspend(() -> trampolinedFoldLeft(isLeft? child.getLeft(): child.getRight(), reduce, init).bind(acc ->
-                            Trampoline.pure(reduce.apply(acc, child.getValue()))));
+                            Trampoline.pure(reduce.apply(isLeft ? acc : (B) child.getValue(), isLeft? child.getValue(): (A) acc))));
                 },
                 (child) ->
                         Trampoline.suspend(() -> trampolinedFoldLeft(child.getLeft(), reduce, init)
