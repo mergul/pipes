@@ -50,6 +50,6 @@ public class TrampolinesTest {
                 );
         //new MyTree<>(100, new MyTree<>(12, new MyTree<>(13, new MyTree<>(15, null, null), new MyTree<>(16, null, null)), new MyTree<>(14, new MyTree<>(18, null, null), new MyTree<>(19, null, null))), new MyTree<>(-2, new MyTree<>(-3, new MyTree<>(-5, null, null), new MyTree<>(-6, null, null)), new MyTree<>(-4, new MyTree<>(-8, null, null), new MyTree<>(-9, null, null))));
 
-        System.out.println(TreeOps.foldLeft(myTree, (a, b)-> String.join("|", a, b), ""));
+        System.out.println(TreeOps.foldLeft(myTree, (a, b)-> String.join(a.isEmpty()||b.isEmpty()?"":"|", a, b), ""));
     }
 }
