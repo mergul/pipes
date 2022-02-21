@@ -18,15 +18,11 @@ public class MyTree<A> extends Tree<A> {
             Function<A, Trampoline<B>> onLeaf,
             Function<Tree<A>, Trampoline<B>> onUnaryBranch,
             Function<Tree<A>, Trampoline<B>> onBinaryBranch) {
-        System.out.println("visit -> " + this.value);
-        if (isLeaf()) {
-            System.out.println("visit -> " + this.value + " is leaf");
-            return onLeaf.apply(value);
-        } else {
-            return this.left != null && this.right != null
-            ? onBinaryBranch.apply(this)
-            : onUnaryBranch.apply(this);
-        }
+        return isLeaf()
+                ? onLeaf.apply(value) :
+                (this.left != null && this.right != null)
+                        ? onBinaryBranch.apply(this)
+                        : onUnaryBranch.apply(this);
     }
 
     @Override
@@ -49,6 +45,7 @@ public class MyTree<A> extends Tree<A> {
         return this.right;
     }
 }
+
 abstract class Tree<A> {
     public abstract <B> Trampoline<B> visit(
             Function<A, Trampoline<B>> onLeaf,
