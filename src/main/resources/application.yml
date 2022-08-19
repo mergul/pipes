@@ -1,0 +1,39 @@
+server:
+  port: 8091
+kafka:
+  topics:
+    receiver-topics: pageviews-topics
+    sender-topics: pageviews-counts
+    auths: auths-topics
+    payments-in: payments-topics
+    balances-in: balances-topics
+    listcom-in: balanceRecords-topics
+    partitioncom-in: partitionCommands-topics
+    paymentcom-in: paymentCommands-topics
+    balancecom-in: balanceCommands-topics
+    checkout-in: usersCheckouts-topics
+    usersHistories-in: usersHistories-topics
+spring:
+  kafka:
+    bootstrap-servers: 0.0.0.0:9092
+    streams:
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+            value:
+              default:
+                type: com.streams.pipes.model.NewsPayload
+            trusted:
+              packages: "*"
+    producer:
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+            type:
+              mapping: news:com.streams.pipes.model.NewsPayload,user:com.streams.pipes.model.UserPayload
